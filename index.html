@@ -3,44 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Gestão Energética - IIoT 4.0</title>
+    <title>Supervisório IIoT 4.0 - Gestão Energética</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 93vh; }
-        .header { text-align: center; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 15px; }
-        .header h2 { margin: 0; color: #38bdf8; }
-        .header p { margin: 5px 0 0 0; color: #94a3b8; font-size: 14px; }
-        #chat-window { flex: 1; background: #1e293b; border-radius: 8px; padding: 20px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #334155; }
-        .msg { margin: 10px 0; padding: 12px; border-radius: 6px; max-width: 80%; line-height: 1.5; }
-        .user { background: #0284c7; color: white; margin-left: auto; text-align: right; }
-        .assistant { background: #334155; color: #f1f5f9; border-left: 4px solid #38bdf8; }
-        .pix-container { background: #1e293b; border: 2px dashed #eab308; padding: 15px; border-radius: 6px; margin-top: 10px; }
-        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; margin-top: 10px; transition: 0.2s; }
-        .btn:hover { background: #0ea5e9; }
-        .btn-success { background: #22c55e; color: white; display: none; }
-        .btn-success:hover { background: #16a34a; }
-        .btn-opcoes { background: #475569; color: white; margin-right: 5px; width: auto; display: inline-block; padding: 10px 15px; font-size: 13px; }
-        .btn-opcoes:hover { background: #64748b; }
-        .input-group { display: flex; gap: 10px; }
-        input { flex: 1; padding: 15px; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: white; font-size: 16px; }
-        input:focus { outline: 2px solid #38bdf8; }
-        .container-botoes { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+        :root {
+            --bg-principal: #0b0f19;
+            --bg-card: #131c2e;
+            --bg-chat: #1a243d;
+            --accent-blue: #0ea5e9;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-principal);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            overflow: hidden;
+        }
+
+        /* Cabeçalho Industrial Dinâmico */
+        .header-painel {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .header-painel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            border-radius: 12px 12px 0 0;
+        }
+
+        .header-painel h2 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header-painel h2 span {
+            color: var(--accent-blue);
+        }
+
+        .header-painel p {
+            margin: 6px 0 0 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Janela de Monitoramento / Chat */
+        #chat-window {
+            flex: 1;
+            background-color: var(--bg-card);
+            border: 1px solid #24324d;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Estilização dos Balões */
+        .msg {
+            padding: 14px 18px;
+            border-radius: 12px;
+            max-width: 85%;
+            line-height: 1.6;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            animation: subir 0.3s ease-out;
+        }
+
+        @keyframes subir {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .user {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+
+        .assistant {
+            background-color: var(--bg-chat);
+            color: #f1f5f9;
+            border-left: 4px solid var(--accent-blue);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Alertas de Sistema Estilizados */
+        .sistema-status {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-yellow);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+        }
+
+        /* Card do PIX Gateway */
+        .pix-container {
+            background: #1e293b;
+            border: 2px dashed var(--accent-yellow);
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 10px;
+            animation: piscarBorda 2s infinite alternate;
+        }
+
+        /* Campo de Texto da Chave */
+        .pix-code {
+            width: 100%;
+            height: 45px;
+            margin-top: 10px;
+            background: #0f172a;
+            color: #34d399;
+            border: 1px solid #334155;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 8px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            resize: none;
+        }
+
+        /* Botões */
+        .btn {
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+            color: #0f172a;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            display: none;
+            width: 100%;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .container-botoes {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .btn-opcoes {
+            flex: 1;
+            color: white;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        /* Entrada de Dados Inferior */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            background-color: var(--bg-card);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #24324d;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px;
+            background: var(--bg-principal);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+
+        /* Estilização Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-principal); }
+        ::-webkit-scrollbar-thumb { background: #24324d; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>Supervisório de Demanda Elétrica Inteligente ⚡</h2>
-        <p>Camada de Software Avançada - Integração LLM Gemini & Mercado Pago</p>
+    <div class="header-painel">
+        <h2><i class="fa-solid : atom fa-industry"></i> SUPERVISÓRIO IIoT 4.0 — <span>AUTOMAÇÃO INDUSTRIAL</span></h2>
+        <p>Eficiência Energética Contextual & Integração Gateway de Pagamentos</p>
     </div>
 
-    <div id="chat-window"></div>
+    <div id="chat-window">
+        <div class="msg assistant">
+            <strong><i class="fa-solid fa-robot"></i> Sistema Tarifador Inteligente:</strong><br><br>
+            Painel operacional inicializado com sucesso. Pronto para análise de despacho de carga elétrica.<br><br>
+            Use o campo inferior para informar o <strong>tempo de ativação desejado</strong> para o equipamento de campo (ESP32) para que a IA processe a melhor janela tarifária.
+        </div>
+    </div>
 
-    <button id="btn-banca" class="btn btn-success" onclick="simularAprovacaoBanca()">✔️ Simular Confirmação de Crédito (Aprovação Banco)</button>
-    <br>
+    <button id="btn-banca" class="btn btn-success" onclick="simularAprovacaoBanca()">
+        <i class="fa-solid fa-circle-check"></i> SIMULAR CONFIRMAÇÃO DE CRÉDITO (APROVAÇÃO GATEWAY)
+    </button>
 
     <div class="input-group">
-        <input type="text" id="campo-texto" placeholder="Ex: Preciso rodar a máquina por 30 minutos">
-        <button class="btn" style="width: auto; margin: 0; padding: 0 25px;" onclick="enviarComando()">Enviar</button>
+        <input type="text" id="campo-texto" placeholder="Ex: Solicito funcionamento por 45 minutos">
+        <button class="btn" style="width: auto; padding: 0 20px;" onclick="enviarComando()">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
     </div>
 
     <script>
@@ -57,44 +286,38 @@
             exibirMensagem(input.value, 'user');
             input.value = '';
 
-            // Extrai a quantidade de minutos que você digitar no celular
             const numerosEncontrados = texto.match(/\d+/);
             if (numerosEncontrados) {
                 minutosSolicitados = parseInt(numerosEncontrados[0]);
             }
 
-            // Definição das tarifas por minuto (Pico vs Normal)
             const tarifaPico = 0.50; 
             const tarifaNormal = 0.15; 
 
-            // Cálculos matemáticos automáticos baseados no que foi digitado
             const valorPico = minutosSolicitados * tarifaPico;
             const valorDesconto = minutosSolicitados * tarifaNormal;
 
             setTimeout(() => {
-                // Resposta simulada do Gemini com foco em Eficiência Energética Industrial
-                let respostaIA = `🤖 [Tarifador IIoT 4.0]: Solicitação identificada para operação de ${minutosSolicitados} minutos.\n\n`;
-                respostaIA += `⚠️ ALERTA DE EFICIÊNCIA: O sistema detectou que a planta industrial se encontra em HORÁRIO DE PONTA (Alta demanda na rede elétrica de Lorena). A tarifa atual de sobrecarga é de R$ ${tarifaPico.toFixed(2)}/min.\n\n`;
-                respostaIA += `📊 ANÁLISE DE CUSTO CONTEXTUAL:\n`;
-                respostaIA += `• Opção 1 (Imediata): R$ ${valorPico.toFixed(2)}\n`;
-                respostaIA += `• Opção 2 (Agendar para após as 21:00h - Tarifa Fora de Ponta): R$ ${valorDesconto.toFixed(2)} (Economia de 70% na sua fatura industrial).\n\n`;
-                respostaIA += `Como engenheira de automação responsável, qual estratégia de despacho de carga você deseja adotar?`;
+                let respostaIA = `⚡ <strong>Análise de Demanda de Carga Concluída:</strong>\n\n`;
+                respostaIA += `Detectamos restrição de rede no horário atual de pico operacional. Para evitar multas tarifárias de demanda, a IA calculou as seguintes opções de faturamento:\n\n`;
+                respostaIA += `🔴 <strong>OPÇÃO 1 (Imediata):</strong> R$ ${valorPico.toFixed(2)} (Tarifa Cheia de Ponta - R$ 0,50/min)\n`;
+                respostaIA += `🟢 <strong>OPÇÃO 2 (Otimizada):</strong> R$ ${valorDesconto.toFixed(2)} (Agendamento para após as 21:00h - R$ 0.15/min com 70% de economia).\n\n`;
+                respostaIA += `Selecione a diretriz de despacho abaixo para gerar a chave de faturamento PIX:`;
 
                 exibirMensagem(respostaIA, 'assistant');
 
-                // Cria dinamicamente os botões de escolha na tela do celular
                 const containerBotoes = document.createElement('div');
                 containerBotoes.className = 'container-botoes';
                 containerBotoes.id = 'grupo-botoes-opcao';
                 
                 containerBotoes.innerHTML = `
-                    <button class="btn btn-opcoes" style="background:#ef4444;" onclick="escolherOpcao('pico', ${valorPico})">⚡ Rodar Agora (Tarifa Cheia)</button>
-                    <button class="btn btn-opcoes" style="background:#10b981;" onclick="escolherOpcao('agendar', ${valorDesconto})">🕒 Agendar para as 21:00h (Com Desconto)</button>
+                    <button class="btn btn-opcoes" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);" onclick="escolherOpcao('pico', ${valorPico})"><i class="fa-solid fa-bolt"></i> Despachar Agora</button>
+                    <button class="btn btn-opcoes" style="background: linear-gradient(135deg, #10b981 0%, #065f46 100%);" onclick="escolherOpcao('agendar', ${valorDesconto})"><i class="fa-solid fa-clock"></i> Agendar Desconto</button>
                 `;
                 chatWindow.appendChild(containerBotoes);
                 chatWindow.scrollTop = chatWindow.scrollHeight;
 
-            }, 800);
+            }, 600);
         }
 
         function escolherOpcao(tipo, valor) {
@@ -104,39 +327,45 @@
             valorCalculadoGlobal = valor;
 
             if (tipo === 'pico') {
-                exibirMensagem(`⚙️ [OPERADOR]: Confirmado. Despachar carga imediatamente aceitando a tarifa de pico industrial.`, 'user');
+                exibirMensagem(`Ordem emitida: Executar operação imediata assumindo custos de ponta.`, 'user');
                 setTimeout(() => {
-                    exibirMensagem(`🤖 [Tarifador IIoT]: Comando aceito. Gerando fatura imediata via gateway do Mercado Pago no valor de R$ ${valor.toFixed(2)}.`, 'assistant');
+                    exibirMensagem(`Garantindo alocação de carga. Emitindo ordem de pagamento PIX instantânea no valor de R$ ${valor.toFixed(2)}.`, 'assistant');
                     exibirEstruturaPix(valor, "PICO");
-                }, 1000);
+                }, 800);
             } else {
-                exibirMensagem(`⚙️ [OPERADOR]: Confirmado. Agendar inicialização da máquina para as 21:00h com tarifa otimizada.`, 'user');
+                exibirMensagem(`Ordem emitida: Programar execução para janela pós-pico (21:00h).`, 'user');
                 setTimeout(() => {
-                    exibirMensagem(`🤖 [Tarifador IIoT]: Agendamento registrado na fila do CLP. Faturamento programado gerado com desconto de eficiência energética no valor de R$ ${valor.toFixed(2)}.`, 'assistant');
-                    exibirEstruturaPix(valor, "AGENDADO_DESCONTO");
-                }, 1000);
+                    exibirMensagem(`Agendamento salvo na memória volátil do controlador. Emitindo faturamento programado com desconto no valor de R$ ${valor.toFixed(2)}.`, 'assistant');
+                    exibirEstruturaPix(valor, "AGENDADO_OTIMIZADO");
+                }, 800);
             }
         }
 
         function exibirMensagem(texto, autor) {
             const div = document.createElement('div');
             div.className = `msg ${autor}`;
-            div.style.whiteSpace = 'pre-line'; 
-            div.innerText = texto;
+            
+            if(autor === 'assistant') {
+                div.innerHTML = `<strong><i class="fa-solid fa-robot"></i> Inteligência IIoT:</strong><br><br>${texto}`;
+            } else {
+                div.innerHTML = `<strong><i class="fa-solid fa-user-gear"></i> Operador:</strong><br><br>${texto}`;
+            }
+            
             chatWindow.appendChild(div);
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
         function exibirEstruturaPix(valor, sufixo) {
             const idFake = Math.floor(Math.random() * 9000) + 1000;
-            const payload = `00020101021226830014br.gov.bcb.pix2561api.mercadopago.com/v1/pix/status/automacao${sufixo}${idFake}520400005303986540${valor.toFixed(2)}5802BR5925Tarifador_IIoT6006LORENA62070503***6304`;
+            const payload = `00020101021226830014br.gov.bcb.pix2561api.mercadopago.com/v1/pix/status/industrial${sufixo}${idFake}520400005303986540${valor.toFixed(2)}5802BR5925Tarifador_IIoT6006LORENA62070503***6304`;
 
             const div = document.createElement('div');
             div.className = 'pix-container';
             div.innerHTML = `
-                <span style="color:#eab308; font-weight:bold;">🔑 String PIX Otimizada por Function Calling:</span>
-                <textarea style="width:100%; height:40px; margin-top:8px; background:#0f172a; color:#94a3b8; border:1px solid #334155; font-size:11px;" readonly>${payload}</textarea>
-                <button class="btn" style="background:#eab308; color:#0f172a; margin-top: 5px;" onclick="navigator.clipboard.writeText('${payload}'); alert('Código PIX copiado!')">Copiar Código EMV</button>
+                <div class="sistema-status"><i class="fa-solid fa-qrcode"></i> GATEWAY MERCADO PAGO ATIVO</div>
+                <span style="color:var(--accent-yellow); font-weight:700; font-size:13px;">String EMV (Copia e Cola) gerada para faturamento:</span>
+                <textarea class="pix-code" readonly>${payload}</textarea>
+                <button class="btn" style="background: var(--accent-yellow); color: #0f172a; margin-top: 10px; width:100%;" onclick="navigator.clipboard.writeText('${payload}'); alert('Código Copia e Cola copiado com sucesso!')"><i class="fa-solid fa-copy"></i> Copiar String de Pagamento</button>
             `;
             chatWindow.appendChild(div);
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -145,7 +374,19 @@
 
         function simularAprovacaoBanca() {
             btnBanca.style.display = 'none';
-            exibirMensagem(`🤖 [SISTEMA CENTRAL]: Confirmação de recebimento recebida do Mercado Pago. Evento de acionamento despachado com sucesso via protocolo MQTT para o ESP32 do Tarifador. O relé físico na GPIO 13 foi comutado.`, 'assistant');
+            
+            const divStatus = document.createElement('div');
+            divStatus.className = 'msg assistant';
+            divStatus.style.borderLeftColor = 'var(--accent-green)';
+            divStatus.innerHTML = `
+                <strong style="color:var(--accent-green);"><i class="fa-solid fa-circle-check"></i> [NOTIFICAÇÃO INTERNA DE REDE]</strong><br><br>
+                • STATUS: <strong>Pagamento Confirmado</strong> via Webhook.<br>
+                • PROTOCOLO: MQTT Gateway ativo.<br>
+                • DISPOSITIVO DE CAMPO: ESP32 (Lorena_Chão_Fábrica).<br>
+                • AÇÃO: Pulso lógico enviado para a <strong>GPIO 13</strong>. Relé acoplado com sucesso. Contagem regressiva de ${minutosSolicitados} minutos iniciada no hardware.
+            `;
+            chatWindow.appendChild(divStatus);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     </script>
 </body>

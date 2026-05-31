@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão Energética - IIoT 4.0</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 93vh; }
+        .header { text-align: center; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 15px; }
+        .header h2 { margin: 0; color: #38bdf8; }
+        .header p { margin: 5px 0 0 0; color: #94a3b8; font-size: 14px; }
+        #chat-window { flex: 1; background: #1e293b; border-radius: 8px; padding: 20px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #334155; }
+        .msg { margin: 10px 0; padding: 12px; border-radius: 6px; max-width: 80%; line-height: 1.5; }
+        .user { background: #0284c7; color: white; margin-left: auto; text-align: right; }
+        .assistant { background: #334155; color: #f1f5f9; border-left: 4px solid #38bdf8; }
+        .pix-container { background: #1e293b; border: 2px dashed #eab308; padding: 15px; border-radius: 6px; margin-top: 10px; }
+        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; margin-top: 10px; transition: 0.2s; }
+        .btn:hover { background: #0ea5e9; }
+        .btn-success { background: #22c55e; color: white; display: none; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-opcoes { background: #475569; color: white; margin-right: 5px; width: auto; display: inline-block; padding: 10px 15px; font-size: 13px; }
+        .btn-opcoes:hover { background: #64748b; }
+        .input-group { display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: white; font-size: 16px; }
+        input:focus { outline: 2px solid #38bdf8; }
+        .container-botoes { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Supervisório de Demanda Elétrica Inteligente ⚡</h2>
+        <p>Camada de Software Avançada - Integração LLM Gemini & Mercado Pago</p>
+    </div>
+
+    <div id="chat-window"></div>
+
+    <button id="btn-banca" class="btn btn-success" onclick="simularAprovacaoBanca()">✔️ Simular Confirmação de Crédito (Aprovação Banco)</button>
+    <br>
+
+    <div class="input-group">
+        <input type="text" id="campo-texto" placeholder="Ex: Preciso rodar a máquina por 30 minutos">
+        <button class="btn" style="width: auto; margin: 0; padding: 0 25px;" onclick="enviarComando()">Enviar</button>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const btnBanca = document.getElementById('btn-banca');
+        let minutosSolicitados = 30; 
+        let valorCalculadoGlobal = 0;
+
+        function enviarComando() {
+            const input = document.getElementById('campo-texto');
+            const texto = input.value.toLowerCase().trim();
+            if(!texto) return;
+
+            exibirMensagem(input.value, 'user');
+            input.value = '';
+
+            // Extrai a quantidade de minutos que você digitar no celular
+            const numerosEncontrados = texto.match(/\d+/);
+            if (numerosEncontrados) {
+                minutosSolicitados = parseInt(numerosEncontrados[0]);
+            }
+
+            // Definição das tarifas por minuto (Pico vs Normal)
+            const tarifaPico = 0.50; 
+            const tarifaNormal = 0.15; 
+
+            // Cálculos matemáticos automáticos baseados no que foi digitado
+            const valorPico = minutosSolicitados * tarifaPico;
+            const valorDesconto = minutosSolicitados * tarifaNormal;
+
+            setTimeout(() => {
+                // Resposta simulada do Gemini com foco em Eficiência Energética Industrial
+                let respostaIA = `🤖 [Tarifador IIoT 4.0]: Solicitação identificada para operação de ${minutosSolicitados} minutos.\n\n`;
+                respostaIA += `⚠️ ALERTA DE EFICIÊNCIA: O sistema detectou que a planta industrial se encontra em HORÁRIO DE PONTA (Alta demanda na rede elétrica de Lorena). A tarifa atual de sobrecarga é de R$ ${tarifaPico.toFixed(2)}/min.\n\n`;
+                respostaIA += `📊 ANÁLISE DE CUSTO CONTEXTUAL:\n`;
+                respostaIA += `• Opção 1 (Imediata): R$ ${valorPico.toFixed(2)}\n`;
+                respostaIA += `• Opção 2 (Agendar para após as 21:00h - Tarifa Fora de Ponta): R$ ${valorDesconto.toFixed(2)} (Economia de 70% na sua fatura industrial).\n\n`;
+                respostaIA += `Como engenheira de automação responsável, qual estratégia de despacho de carga você deseja adotar?`;
+
+                exibirMensagem(respostaIA, 'assistant');
+
+                // Cria dinamicamente os botões de escolha na tela do celular
+                const containerBotoes = document.createElement('div');
+                containerBotoes.className = 'container-botoes';
+                containerBotoes.id = 'grupo-botoes-opcao';
+                
+                containerBotoes.innerHTML = `
+                    <button class="btn btn-opcoes" style="background:#ef4444;" onclick="escolherOpcao('pico', ${valorPico})">⚡ Rodar Agora (Tarifa Cheia)</button>
+                    <button class="btn btn-opcoes" style="background:#10b981;" onclick="escolherOpcao('agendar', ${valorDesconto})">🕒 Agendar para as 21:00h (Com Desconto)</button>
+                `;
+                chatWindow.appendChild(containerBotoes);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            }, 800);
+        }
+
+        function escolherOpcao(tipo, valor) {
+            const botoes = document.getElementById('grupo-botoes-opcao');
+            if(botoes) botoes.remove();
+
+            valorCalculadoGlobal = valor;
+
+            if (tipo === 'pico') {
+                exibirMensagem(`⚙️ [OPERADOR]: Confirmado. Despachar carga imediatamente aceitando a tarifa de pico industrial.`, 'user');
+                setTimeout(() => {
+                    exibirMensagem(`🤖 [Tarifador IIoT]: Comando aceito. Gerando fatura imediata via gateway do Mercado Pago no valor de R$ ${valor.toFixed(2)}.`, 'assistant');
+                    exibirEstruturaPix(valor, "PICO");
+                }, 1000);
+            } else {
+                exibirMensagem(`⚙️ [OPERADOR]: Confirmado. Agendar inicialização da máquina para as 21:00h com tarifa otimizada.`, 'user');
+                setTimeout(() => {
+                    exibirMensagem(`🤖 [Tarifador IIoT]: Agendamento registrado na fila do CLP. Faturamento programado gerado com desconto de eficiência energética no valor de R$ ${valor.toFixed(2)}.`, 'assistant');
+                    exibirEstruturaPix(valor, "AGENDADO_DESCONTO");
+                }, 1000);
+            }
+        }
+
+        function exibirMensagem(texto, autor) {
+            const div = document.createElement('div');
+            div.className = `msg ${autor}`;
+            div.style.whiteSpace = 'pre-line'; 
+            div.innerText = texto;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function exibirEstruturaPix(valor, sufixo) {
+            const idFake = Math.floor(Math.random() * 9000) + 1000;
+            const payload = `00020101021226830014br.gov.bcb.pix2561api.mercadopago.com/v1/pix/status/automacao${sufixo}${idFake}520400005303986540${valor.toFixed(2)}5802BR5925Tarifador_IIoT6006LORENA62070503***6304`;
+
+            const div = document.createElement('div');
+            div.className = 'pix-container';
+            div.innerHTML = `
+                <span style="color:#eab308; font-weight:bold;">🔑 String PIX Otimizada por Function Calling:</span>
+                <textarea style="width:100%; height:40px; margin-top:8px; background:#0f172a; color:#94a3b8; border:1px solid #334155; font-size:11px;" readonly>${payload}</textarea>
+                <button class="btn" style="background:#eab308; color:#0f172a; margin-top: 5px;" onclick="navigator.clipboard.writeText('${payload}'); alert('Código PIX copiado!')">Copiar Código EMV</button>
+            `;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            btnBanca.style.display = 'block'; 
+        }
+
+        function simularAprovacaoBanca() {
+            btnBanca.style.display = 'none';
+            exibirMensagem(`🤖 [SISTEMA CENTRAL]: Confirmação de recebimento recebida do Mercado Pago. Evento de acionamento despachado com sucesso via protocolo MQTT para o ESP32 do Tarifador. O relé físico na GPIO 13 foi comutado.`, 'assistant');
+        }
+    </script>
+</body>
+</html>
